@@ -1,17 +1,15 @@
 'use client'
 
 import * as THREE from 'three'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, useParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Canvas, extend, useFrame, useThree } from '@react-three/fiber'
 import { useCursor, MeshPortalMaterial, CameraControls, Gltf, Text } from '@react-three/drei'
 import { easing, geometry } from 'maath'
 import { suspend } from 'suspend-react'
 
-import { useParams, useRouter  } from 'next/navigation'
-
 export const Model = () => {
-
+    <Frame id="01" name={`pick\nles`} author="Omar Faruq Tawsif" bg="#e4cdac" />
 }
 
 interface FrameProps {
@@ -29,7 +27,7 @@ function Frame({ id, name, author, bg, width, height, children, ...props }: Fram
     const params = useParams()
     const router = useRouter()
     const [hovered, hover] = useState(false)
-    const onDoubleClick = (e:any) => (e.stopPropagation(), setLocation('/item/' + e.object.name))
+    const onDoubleClick = (e:any) => (e.stopPropagation(), router.push('/item/' + 2))
 
     return <></>;
 }
