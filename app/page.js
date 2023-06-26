@@ -6,6 +6,7 @@ import Floor from "../components/Floor";
 import LightBulb from "../components/Light";
 import OrbitControls from "../components/OrbitControls";
 import Draggable from "../components/Draggable";
+import Model from "../components/Model"
 import { Suspense } from "react";
 
 import styles from "./styles/page.module.css";
@@ -16,18 +17,13 @@ export default function App() {
       <Canvas
         shadows
         className={styles.canvas}
-        camera={{
-          position: [-6, 7, 7],
-        }}
+        camera={{ fov: 75, position: [0, 0, 3] }}
       >
-        <ambientLight color='red' intensity={0.3} />
-        <LightBulb position={[0, 3, 0]} />
-        <Draggable>
+        <color attach="background" args={['#f0f0f0']} />
           <Suspense fallback={null}>
-            <Box rotateX={3} rotateY={0.2} />
+            <Model />
           </Suspense>
-        </Draggable>
-        <Floor position={[0, -1, 0]} />
+
         <OrbitControls />
       </Canvas>
     </div>

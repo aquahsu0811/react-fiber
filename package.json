@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pmndrs/assets": "^1.6.0",
     "@react-three/drei": "^9.77.4",
     "@react-three/fiber": "^8.13.3",
     "eslint": "8.43.0",
