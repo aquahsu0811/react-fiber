@@ -10,6 +10,7 @@ function Draggable(props) {
   const [objects, setObjects] = useState();
   const { camera, gl, scene } = useThree();
   useEffect(() => {
+    console.log(groupRef)
     setObjects(groupRef.current.children);
   }, [groupRef]);
 
