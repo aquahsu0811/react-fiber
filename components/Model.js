@@ -6,40 +6,65 @@ import { MeshPortalMaterial, CameraControls, Gltf, Text, useCursor } from '@reac
 import { easing, geometry } from 'maath'
 import * as THREE from 'three'
 import { suspend } from 'suspend-react'
+import { Canvas } from "@react-three/fiber";
+import OrbitControls from "../components/OrbitControls";
+import { Suspense } from "react";
+
+import styles from "../app/styles/page.module.css";
 
 extend(geometry)
 const regular = import('@pmndrs/assets/fonts/inter_regular.woff')
 const medium = import('@pmndrs/assets/fonts/inter_medium.woff')
 
-function Model({onParamsReceived }) {
-
+function Model() {
+    const [params, setParams] = useState(0);
     const handleFrameDoubleClick = (id) => {
-        onParamsReceived(id);
-      };
+        console.log(id)
+        if (params === 0) {
+            setParams(id);
+        }
+        else {
+            setParams(0)
+        }
+    };
 
     return (
         <>
-            <color attach="background" args={['#f0f0f0']} />
-            <Frame id="1" name={`pick\nles`} author="Omar Faruq Tawsif" bg="#e4cdac" position={[-1.15, 0, 0]} rotation={[0, 0.5, 0]} onFrameDoubleClick={handleFrameDoubleClick} >
-                <Gltf src="/model/pickles_3d_version_of_hyuna_lees_illustration-transformed.glb" scale={8} position={[0, -0.7, -2]} />
-            </Frame>
-            <Frame id="2" name="tea" author="Omar Faruq Tawsif" onFrameDoubleClick={handleFrameDoubleClick} >
-                <Gltf src="/model/fiesta_tea-transformed.glb" position={[0, -2, -3]} />
-            </Frame>
-            <Frame id="3" name="still" author="Omar Faruq Tawsif" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.5, 0]} onFrameDoubleClick={handleFrameDoubleClick} >
-                <Gltf src="/model/still_life_based_on_heathers_artwork-transformed.glb" scale={2} position={[0, -0.8, -4]} />
-            </Frame>
+            <div className={styles.scene}>
+                <Canvas
+                    shadows
+                    className={styles.canvas}
+                    camera={{ fov: 75, position: [0, 0, 3] }}
+                >
+                    <Suspense fallback={null}>
+                        <color attach="background" args={['#f0f0f0']} />
+                        <Frame id={1} name={`pick\nles`} author="Omar Faruq Tawsif" bg="#e4cdac" position={[-1.15, 0, 0]} rotation={[0, 0.5, 0]} onDoubleClick={(e) => (handleFrameDoubleClick(1))} params={params}>
+                            <Gltf src="/model/pickles_3d_version_of_hyuna_lees_illustration-transformed.glb" scale={8} position={[0, -0.7, -2]} />
+                        </Frame>
+                        <Frame id={2} name="tea" author="Omar Faruq Tawsif" onDoubleClick={(e) => (handleFrameDoubleClick(2))} params={params} >
+                            <Gltf src="/model/fiesta_tea-transformed.glb" position={[0, -2, -3]} />
+                        </Frame>
+                        <Frame id={3} name="still" author="Omar Faruq Tawsif" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.5, 0]} onDoubleClick={(e) => (handleFrameDoubleClick(3))} params={params}>
+                            <Gltf src="/model/still_life_based_on_heathers_artwork-transformed.glb" scale={2} position={[0, -0.8, -4]} />
+                        </Frame>
+                    </Suspense>
+
+                    <OrbitControls />
+                </Canvas>
+            </div>
+            <div style={{ position: 'absolute', top: 40, left: 40, fontSize: '13px', color: 'black' }} href="#" >
+                {params == 0 ? 'double click to enter portal' : 'double click to leave portal '+params  }
+            </div>
         </>
     );
 }
 export default Model;
 
-function Frame({ id, name, author, bg, width = 1, height = 1.61803398875,  children, onFrameDoubleClick, ...props }) {
+function Frame({ id, name, author, bg, width = 1, height = 1.61803398875, children, params, ...props }) {
     const portal = useRef()
     const router = useRouter()
     const [hovered, hover] = useState(false)
-    let params = ""
-    console.log(params)
+
     useCursor(hovered)
     useFrame((state, dt) => easing.damp(portal.current, 'blend', params === id ? 1 : 0, 0.2, dt))
     return (
@@ -53,17 +78,17 @@ function Frame({ id, name, author, bg, width = 1, height = 1.61803398875,  child
             <Text font={suspend(regular).default} fontSize={0.04} anchorX="right" position={[0.0, -0.677, 0.01]} material-toneMapped={false}>
                 {author}
             </Text>
-            <mesh name={id} onDoubleClick={(e) => ( params = id, onFrameDoubleClick(id))} 
-                            onPointerOver={(e) => hover(true)} 
-                            // onPointerOut={() => hover(false)}
-                            >
+            <mesh name={id}
+                onPointerOver={(e) => hover(true)}
+            // onPointerOut={() => hover(false)}
+            >
                 <roundedPlaneGeometry args={[width, height, 0.1]} />
                 <MeshPortalMaterial ref={portal} side={THREE.DoubleSide}>
                     <color attach="background" args={[bg]} />
                     {children}
                 </MeshPortalMaterial>
             </mesh>
-        </group>
+        </group >
     )
 }
 
@@ -71,12 +96,12 @@ function Rig({ position = new THREE.Vector3(0, 0, 2), focus = new THREE.Vector3(
     const { controls, scene } = useThree()
     const [, params] = useRoute('/item/:id')
     useEffect(() => {
-      const active = scene.getObjectByName(params?.id)
-      if (active) {
-        active.parent.localToWorld(position.set(0, 0.5, 0.25))
-        active.parent.localToWorld(focus.set(0, 0, -2))
-      }
-      controls?.setLookAt(...position.toArray(), ...focus.toArray(), true)
+        const active = scene.getObjectByName(params?.id)
+        if (active) {
+            active.parent.localToWorld(position.set(0, 0.5, 0.25))
+            active.parent.localToWorld(focus.set(0, 0, -2))
+        }
+        controls?.setLookAt(...position.toArray(), ...focus.toArray(), true)
     })
     return <CameraControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
-  }
+}

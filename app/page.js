@@ -8,30 +8,21 @@ import { Suspense } from "react";
 import styles from "./styles/page.module.css";
 
 export default function App() {
-  const [params, setParams] = useState('');
-
+  const [params, setParams] = useState(0);
   const handleReceivedParams = (params) => {
-    setParams(params);
+    console.log('test:',params)
+    if(params === 0 ){
+      setParams(params);
+    }
+    else{
+      console.log('else')
+      setParams(0)
+    }
   };
 
   return (
     <>
-      <div className={styles.scene}>
-        <Canvas
-          shadows
-          className={styles.canvas}
-          camera={{ fov: 75, position: [0, 0, 3] }}
-        >
-          <Suspense fallback={null}>
-            <Model onParamsReceived={handleReceivedParams}/>
-          </Suspense>
-
-          <OrbitControls />
-        </Canvas>
-      </div>
-      <div style={{ position: 'absolute', top: 40, left: 40, fontSize: '13px', color:'black' }} href="#" >
-      double click to enter portal {params}
-      </div>
+      <Model />
     </>
-  );
+  );params
 }
