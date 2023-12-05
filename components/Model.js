@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useLoader, extend, useFrame } from "@react-three/fiber";
-import { MeshPortalMaterial, CameraControls, Gltf, Text } from '@react-three/drei'
+import { MeshPortalMaterial, CameraControls, Gltf, Text, RoundedBox } from '@react-three/drei'
 import { easing, geometry } from 'maath'
 import * as THREE from 'three'
 import { suspend } from 'suspend-react'
@@ -16,7 +16,11 @@ function Box(props) {
                 <Gltf src="/model/pickles_3d_version_of_hyuna_lees_illustration-transformed.glb" scale={8} position={[0, -0.7, -2]} />
             </Frame>
             <Frame id="02" name="tea" author="Omar Faruq Tawsif">
-                <Gltf src="/model/fiesta_tea-transformed.glb" position={[0, -2, -3]} />
+                <mesh>
+
+                    <torusGeometry args={[0.65, 0.3, 64]} />
+                    <meshLambertMaterial color={'hotpink'} />
+                </mesh>
             </Frame>
             <Frame id="03" name="still" author="Omar Faruq Tawsif" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.5, 0]}>
                 <Gltf src="/model/still_life_based_on_heathers_artwork-transformed.glb" scale={2} position={[0, -0.8, -4]} />
@@ -41,13 +45,14 @@ function Frame({ id, name, author, bg, width = 1, height = 1.61803398875, childr
             <Text font={suspend(regular).default} fontSize={0.04} anchorX="right" position={[0.0, -0.677, 0.01]} material-toneMapped={false}>
                 {author}
             </Text>
-            <mesh name={id}>
-                <roundedPlaneGeometry args={[width, height, 0.1]} />
+            <RoundedBox name={id} args={[1, 1.5, 0.1]}
+                radius={0.1}>
+
                 <MeshPortalMaterial side={THREE.DoubleSide}>
                     <color attach="background" args={[bg]} />
                     {children}
                 </MeshPortalMaterial>
-            </mesh>
+            </RoundedBox>
         </group>
     )
 }
